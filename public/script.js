@@ -12,6 +12,8 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     async function fetchSchedule() {
+        scheduleContainer.innerHTML = '<p class="loading-message">Loading schedule...</p>'; // Show loading message
+
         try {
             const response = await fetch('/api/schedule');
             allScheduleData = await response.json();
@@ -19,7 +21,7 @@ document.addEventListener('DOMContentLoaded', () => {
             renderCategoryFilters(allScheduleData);
         } catch (error) {
             console.error('Error fetching schedule:', error);
-            scheduleContainer.innerHTML = '<p>Failed to load schedule. Please try again later.</p>';
+            scheduleContainer.innerHTML = '<p class="error-message">Failed to load schedule. Please try again later.</p>'; // Show specific error message
         }
     }
 

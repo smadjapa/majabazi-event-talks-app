@@ -1,8 +1,15 @@
 document.addEventListener('DOMContentLoaded', () => {
     const scheduleContainer = document.getElementById('schedule-container');
     const categoryTagsContainer = document.getElementById('category-tags');
+    const speakerSearchInput = document.getElementById('speaker-search-input'); // New: Get speaker search input
     let allScheduleData = [];
     let activeCategories = new Set();
+    let speakerSearchTerm = ''; // New: Speaker search term
+
+    speakerSearchInput.addEventListener('input', (event) => { // New: Event listener for speaker search
+        speakerSearchTerm = event.target.value.toLowerCase();
+        filterSchedule();
+    });
 
     async function fetchSchedule() {
         try {
@@ -131,19 +138,35 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
     function filterSchedule() {
-        if (activeCategories.size === 0) {
+        let filteredSchedule = allScheduleData;
+
+        const isCategoryFilterActive = activeCategories.size > 0;
+        const isSpeakerFilterActive = speakerSearchTerm.trim() !== '';
+
+        if (!isCategoryFilterActive && !isSpeakerFilterActive) {
             renderSchedule(allScheduleData); // Show all if no filters active
             return;
         }
 
-        const filteredSchedule = allScheduleData.filter(event => {
+        filteredSchedule = allScheduleData.filter(event => {
             if (event.type !== 'talk') {
                 return true; // Always show breaks and transitions
             }
-            if (event.categories && event.categories.some(cat => activeCategories.has(cat))) {
-                return true;
+
+            let matchesCategory = true;
+            if (isCategoryFilterActive) {
+                matchesCategory = event.categories && event.categories.some(cat => activeCategories.has(cat));
             }
-            return false;
+
+            let matchesSpeaker = true;
+            if (isSpeakerFilterActive) {
+                matchesSpeaker = event.speakers && event.speakers.some(speaker =>
+                    speaker.toLowerCase().includes(speakerSearchTerm)
+                );
+            }
+
+            // A talk must match BOTH active category filters (if any) AND speaker filter (if any)
+            return matchesCategory && matchesSpeaker;
         });
         renderSchedule(filteredSchedule);
     }

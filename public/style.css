@@ -43,6 +43,22 @@ main {
     margin-top: 0;
 }
 
+.clear-filters-button {
+    background-color: #f0ad4e; /* A warm, clear-like color */
+    color: white;
+    padding: 8px 15px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 0.9em;
+    margin-bottom: 15px;
+    transition: background-color 0.3s ease;
+}
+
+.clear-filters-button:hover {
+    background-color: #ec971f;
+}
+
 #speaker-search-input {
     width: 100%;
     padding: 10px;

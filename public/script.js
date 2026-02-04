@@ -1,13 +1,22 @@
 document.addEventListener('DOMContentLoaded', () => {
     const scheduleContainer = document.getElementById('schedule-container');
     const categoryTagsContainer = document.getElementById('category-tags');
-    const speakerSearchInput = document.getElementById('speaker-search-input'); // New: Get speaker search input
+    const speakerSearchInput = document.getElementById('speaker-search-input');
+    const clearFiltersBtn = document.getElementById('clear-filters-btn'); // New: Get clear filters button
     let allScheduleData = [];
     let activeCategories = new Set();
-    let speakerSearchTerm = ''; // New: Speaker search term
+    let speakerSearchTerm = '';
 
-    speakerSearchInput.addEventListener('input', (event) => { // New: Event listener for speaker search
+    speakerSearchInput.addEventListener('input', (event) => {
         speakerSearchTerm = event.target.value.toLowerCase();
+        filterSchedule();
+    });
+
+    clearFiltersBtn.addEventListener('click', () => { // New: Event listener for clear filters button
+        activeCategories.clear();
+        speakerSearchInput.value = '';
+        speakerSearchTerm = '';
+        updateCategoryTagsUI();
         filterSchedule();
     });
 

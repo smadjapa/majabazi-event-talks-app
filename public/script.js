@@ -1,23 +1,36 @@
+// Debounce function
+function debounce(func, delay) {
+    let timeout;
+    return function(...args) {
+        const context = this;
+        clearTimeout(timeout);
+        timeout = setTimeout(() => func.apply(context, args), delay);
+    };
+}
+
 document.addEventListener('DOMContentLoaded', () => {
     const scheduleContainer = document.getElementById('schedule-container');
     const categoryTagsContainer = document.getElementById('category-tags');
     const speakerSearchInput = document.getElementById('speaker-search-input');
-    const clearFiltersBtn = document.getElementById('clear-filters-btn'); // New: Get clear filters button
+    const clearFiltersBtn = document.getElementById('clear-filters-btn');
     let allScheduleData = [];
     let activeCategories = new Set();
     let speakerSearchTerm = '';
 
+    // Debounced version of filterSchedule for speaker search
+    const debouncedFilterSchedule = debounce(filterSchedule, 300);
+
     speakerSearchInput.addEventListener('input', (event) => {
         speakerSearchTerm = event.target.value.toLowerCase();
-        filterSchedule();
+        debouncedFilterSchedule(); // Call the debounced version
     });
 
-    clearFiltersBtn.addEventListener('click', () => { // New: Event listener for clear filters button
+    clearFiltersBtn.addEventListener('click', () => {
         activeCategories.clear();
         speakerSearchInput.value = '';
         speakerSearchTerm = '';
         updateCategoryTagsUI();
-        filterSchedule();
+        filterSchedule(); // Call non-debounced filterSchedule here for immediate reset
     });
 
     async function fetchSchedule() {
